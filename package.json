@@ -1,0 +1,48 @@
+{
+  "name": "sukoon-ai-mvp",
+  "version": "1.0.0",
+  "description": "Sukoon AI MVP - Diary + Chat + Mood with mental health support",
+  "main": "index.js",
+  "scripts": {
+    "install:all": "npm run install:services && npm run install:frontend && npm run install:bff",
+    "install:services": "cd services/chat && npm install && cd ../diary && npm install && cd ../mood && npm install && cd ../triage && npm install && cd ../insights && npm install && cd ../notif && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "install:bff": "cd bff && npm install",
+    "dev": "npm run dev:services",
+    "dev:services": "node scripts/dev-runner.js",
+    "dev:frontend": "npm run --workspace frontend dev",
+    "dev:bff": "cd bff && npm run dev",
+    "test": "npm run test:services && npm run test:frontend",
+    "test:services": "cd services/chat && npm test && cd ../diary && npm test && cd ../mood && npm test && cd ../triage && npm test && cd ../insights && npm test && cd ../notif && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "lint": "npm run lint:services && npm run lint:frontend",
+    "lint:services": "cd services/chat && npm run lint && cd ../diary && npm run lint && cd ../mood && npm run lint && cd ../triage && npm run lint && cd ../insights && npm run lint && cd ../notif && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint",
+    "build": "npm run build:services && npm run build:frontend && npm run build:bff",
+    "build:services": "npm run --workspace services/chat build && npm run --workspace services/diary build && npm run --workspace services/mood build && npm run --workspace services/triage build && npm run --workspace services/insights build",
+    "build:frontend": "npm run --workspace frontend build",
+    "build:bff": "npm run --workspace bff build"
+  },
+  "workspaces": [
+    "services/*",
+    "frontend",
+    "bff"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "typescript": "^5.2.0",
+    "@types/node": "^20.0.0"
+  },
+  "keywords": [
+    "mental-health",
+    "ai",
+    "diary",
+    "chat",
+    "mood-tracking",
+    "vertex-ai",
+    "firestore",
+    "pubsub"
+  ],
+  "author": "Sukoon AI Team",
+  "license": "MIT"
+}

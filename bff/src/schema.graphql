@@ -1,0 +1,145 @@
+scalar DateTime
+scalar JSON
+
+type Query {
+  # Diary queries
+  diaryEntries(userId: ID!, limit: Int, offset: String): [DiaryEntry!]!
+  diaryEntry(userId: ID!, entryId: ID!): DiaryEntry
+
+  # Chat queries
+  chatHistory(userId: ID!, chatId: ID!, limit: Int): [ChatTurn!]!
+  userChats(userId: ID!, limit: Int): [Chat!]!
+
+  # Mood queries
+  moodHistory(userId: ID!, limit: Int, startDate: DateTime, endDate: DateTime): [MoodEvent!]!
+  moodStats(userId: ID!, days: Int): MoodStats!
+
+  # Insights queries
+  userInsights(userId: ID!): Insights
+
+  # Health check
+  health: HealthStatus!
+}
+
+type Mutation {
+  # Diary mutations
+  createDiaryEntry(input: CreateDiaryEntryInput!): DiaryEntry!
+  updateDiaryEntry(userId: ID!, entryId: ID!, input: UpdateDiaryEntryInput!): DiaryEntry!
+  deleteDiaryEntry(userId: ID!, entryId: ID!): Boolean!
+
+  # Chat mutations
+  sendChatMessage(input: SendChatMessageInput!): ChatResponse!
+
+  # Mood mutations
+  logMood(input: LogMoodInput!): MoodEvent!
+  updateMood(userId: ID!, eventId: ID!, input: UpdateMoodInput!): MoodEvent!
+  deleteMood(userId: ID!, eventId: ID!): Boolean!
+
+  # Insights mutations
+  generateInsights(userId: ID!): Insights!
+}
+
+# Input types
+input CreateDiaryEntryInput {
+  userId: ID!
+  text: String!
+  lang: String
+}
+
+input UpdateDiaryEntryInput {
+  text: String
+  lang: String
+}
+
+input SendChatMessageInput {
+  userId: ID!
+  message: String!
+  chatId: String
+  lang: String
+}
+
+input LogMoodInput {
+  userId: ID!
+  moodScore: Float!
+  notes: String
+  lang: String
+}
+
+input UpdateMoodInput {
+  moodScore: Float
+  notes: String
+}
+
+# Object types
+type DiaryEntry {
+  userId: ID!
+  entryId: ID!
+  createdAt: DateTime!
+  textUri: String!
+  lang: String
+  text: String
+}
+
+type Chat {
+  chatId: ID!
+  createdAt: DateTime!
+  lastActivity: DateTime!
+  turnCount: Int!
+}
+
+type ChatTurn {
+  userId: ID!
+  chatId: ID!
+  turnId: ID!
+  createdAt: DateTime!
+  textUri: String!
+  lang: String
+  riskLevel: String
+  text: String
+}
+
+type ChatResponse {
+  chatId: ID!
+  turnId: ID!
+  userMessage: String!
+  aiResponse: String!
+  riskLevel: String
+  createdAt: DateTime!
+}
+
+type MoodEvent {
+  userId: ID!
+  eventId: ID!
+  createdAt: DateTime!
+  moodScore: Float!
+  notes: String
+}
+
+type MoodStats {
+  count: Int!
+  average: Float!
+  min: Float!
+  max: Float!
+  trend: String!
+}
+
+type Insights {
+  moodTrends: JSON
+  diaryThemes: [String!]!
+  riskPatterns: JSON
+  recommendations: [String!]!
+  generatedAt: DateTime
+}
+
+type HealthStatus {
+  status: String!
+  services: JSON!
+  timestamp: DateTime!
+}
+
+# Subscriptions (if needed in the future)
+type Subscription {
+  # Real-time updates could be added here
+  moodLogged(userId: ID!): MoodEvent!
+  chatMessage(userId: ID!): ChatResponse!
+}

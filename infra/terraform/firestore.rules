@@ -1,0 +1,75 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidUserId(userId) {
+      return userId.matches('[a-zA-Z0-9_-]{20,40}');
+    }
+
+    function isValidTimestamp(timestamp) {
+      return timestamp is timestamp && timestamp.seconds > 0;
+    }
+
+    // Users collection - pseudonymous access
+    match /users/{userId} {
+      // Allow read/write for the owner only
+      allow read, write: if isOwner(userId) && isValidUserId(userId);
+
+      // Allow create for new pseudonymous users
+      allow create: if isAuthenticated() && isValidUserId(userId) &&
+                   !exists(/databases/$(database)/documents/users/$(userId));
+
+      // Diary entries subcollection
+      match /diary/{entryId} {
+        allow read, write: if isOwner(userId) && isValidUserId(userId);
+        allow create: if isOwner(userId) && isValidUserId(userId) &&
+                     request.resource.data.keys().hasAll(['textUri', 'createdAt', 'lang']) &&
+                     isValidTimestamp(request.resource.data.createdAt);
+      }
+
+      // Chat conversations subcollection
+      match /chats/{chatId} {
+        allow read, write: if isOwner(userId) && isValidUserId(userId);
+
+        // Chat turns sub-subcollection
+        match /turns/{turnId} {
+          allow read, write: if isOwner(userId) && isValidUserId(userId);
+          allow create: if isOwner(userId) && isValidUserId(userId) &&
+                       request.resource.data.keys().hasAll(['textUri', 'createdAt', 'lang']) &&
+                       isValidTimestamp(request.resource.data.createdAt);
+        }
+      }
+
+      // Mood events subcollection
+      match /mood/{eventId} {
+        allow read, write: if isOwner(userId) && isValidUserId(userId);
+        allow create: if isOwner(userId) && isValidUserId(userId) &&
+                     request.resource.data.keys().hasAll(['moodScore', 'createdAt']) &&
+                     isValidTimestamp(request.resource.data.createdAt) &&
+                     request.resource.data.moodScore is float &&
+                     request.resource.data.moodScore >= 1.0 &&
+                     request.resource.data.moodScore <= 10.0;
+      }
+
+      // Insights snapshot
+      match /insights/snapshot {
+        allow read: if isOwner(userId) && isValidUserId(userId);
+        allow write: if false; // Only allow writes from backend services
+      }
+    }
+
+    // System collections for triage and notifications
+    match /system/{document=**} {
+      // Only allow access from backend services with proper service accounts
+      allow read, write: if false; // Backend services use direct API access
+    }
+  }
+}

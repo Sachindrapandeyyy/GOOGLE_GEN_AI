@@ -1,0 +1,159 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased scroll-smooth;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-gradient-to-br from-purple-50 via-white to-blue-50 min-h-screen text-neutral-800;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Nunito", "Inter", system-ui, sans-serif;
+    @apply font-semibold;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-2xl shadow-md p-6 transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply hover:shadow-lg hover:-translate-y-1;
+  }
+
+  .btn {
+    @apply font-medium rounded-xl transition-all duration-300 flex items-center justify-center;
+  }
+
+  .btn-primary {
+    @apply bg-primary-400 text-white hover:bg-primary-500 active:bg-primary-600;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary-300 text-white hover:bg-secondary-400 active:bg-secondary-500;
+  }
+
+  .btn-accent {
+    @apply bg-accent-400 text-white hover:bg-accent-500 active:bg-accent-600;
+  }
+
+  .btn-outline {
+    @apply border-2 border-primary-400 text-primary-400 hover:bg-primary-50;
+  }
+
+  .btn-ghost {
+    @apply text-primary-400 hover:bg-primary-50;
+  }
+
+  .btn-sm {
+    @apply text-sm py-2 px-3;
+  }
+
+  .btn-md {
+    @apply text-base py-2.5 px-4;
+  }
+
+  .btn-lg {
+    @apply text-lg py-3 px-5;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-neutral-200 px-4 py-2.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent;
+  }
+
+  .textarea {
+    @apply w-full rounded-xl border border-neutral-200 px-4 py-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent resize-none;
+  }
+
+  .gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-300;
+  }
+
+  .animated-gradient-bg {
+    background: linear-gradient(-45deg, #c4b5fd, #f9a8d4, #93c5fd, #a78bfa);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+
+  .chat-bubble-user {
+    @apply bg-gradient-to-r from-primary-400 to-primary-500 text-white rounded-2xl rounded-tr-none px-4 py-3 max-w-[80%] ml-auto;
+  }
+
+  .chat-bubble-bot {
+    @apply bg-gradient-to-r from-accent-100 to-accent-200 text-neutral-800 rounded-2xl rounded-tl-none px-4 py-3 max-w-[80%] mr-auto;
+  }
+
+  .shimmer {
+    @apply relative overflow-hidden;
+  }
+
+  .shimmer::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(255, 255, 255, 0.5) 60%,
+      rgba(255, 255, 255, 0)
+    );
+    animation: shimmer 2s infinite;
+    content: "";
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  }
+}
+
+/* Animations */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* PWA styles */
+@media all and (display-mode: standalone) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
